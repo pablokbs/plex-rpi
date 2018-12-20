@@ -1,0 +1,13 @@
+media/*
+plex/*
+.bash*
+.profile*
+.ssh*
+.vim*
+downloads/*
+.gitconfig
+torrents-config/config/rtorrent/rtorrent_sess/*
+torrents-config/config/log/*
+torrents-config/config/nginx/*
+torrents-config/config/php/*
+torrents-config/config/rutorrent/*

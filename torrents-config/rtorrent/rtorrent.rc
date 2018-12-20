@@ -1,0 +1,30 @@
+execute = {sh,-c,/usr/bin/php7 /usr/share/webapps/rutorrent/php/initplugins.php abc &}
+execute.nothrow = rm,/run/php/.rtorrent.sock
+network.scgi.open_local = /run/php/.rtorrent.sock
+schedule = socket_chmod,0,0,"execute=chmod,0660,/run/php/.rtorrent.sock"
+schedule = socket_chgrp,0,0,"execute=chgrp,abc,/run/php/.rtorrent.sock"
+log.open_file = "rtorrent", /config/log/rtorrent/rtorrent.log
+log.add_output = "info", "rtorrent"
+min_peers = 40
+max_peers = 1200
+max_uploads = 15
+#download_rate = 10000
+#upload_rate = 5000
+# schedule = watch_directory_1,5,5,"load.start=/downloads/watched/*.torrent"
+directory = /downloads/incoming
+session = /config/rtorrent/rtorrent_sess
+#schedule = low_diskspace,5,60,close_low_diskspace=100M
+# ip = 178.32.28.51
+bind = 0.0.0.0
+port_range = 51413-51413
+check_hash = yes
+use_udp_trackers = yes
+encryption = allow_incoming,try_outgoing,enable_retry
+dht = auto
+dht_port = 6881
+peer_exchange = yes
+# network.http.ssl_verify_peer.set=0
+# scgi_port = 0.0.0.0:5000
+encoding_list = UTF-8
+# system.umask.set = 022
+system.method.set_key = event.download.finished,exec_filebot,"execute=/config/filebot-copy,$d.get_base_path=,$d.get_custom1="

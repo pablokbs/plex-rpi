@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen">
+	<title>Leechers-Paradise.org</title>
+</head>
+
+<body>
+
+<div class="head">
+<img src="images/logo.png" alt="Leechers-Paradise - An open tracker">
+<br>
+<!-- Stats safety line 16 gets replaced -->
+<!-- Stats safety -->
+Leechers-Paradise Is Currently Serving 1068337 torrents with 6707729 Peers And 5096629 Seeders
+<!-- Stats safety -->
+<!-- Stats safety -->
+<!-- Stats safety -->
+</div>
+
+<div class="center" id="txt">
+  <p><img src="images/news.png" width="68" height="26">
+  </p>
+  <p>WoW It seems that I have been running a Bittorrent tracker for more than 10 years. The oldest torrent I managed to find was from 19-01-2005. A fitting moment to stop the legacy TCP support, saving CPU and bandwidth. </p>
+  <p>&nbsp;</p>
+  <p><img src="images/url.png" width="150" height="26"></p>
+  <p>udp://tracker.leechers-paradise.org:6969</p>
+  <p>&nbsp;</p>
+  <p>The scrape address for the tracker is (updated every 5min): <br>
+ http://trackers.leechers-paradise.org/scrape or <br>
+ http://trackers.leechers-paradise.org/scrape.gz
+  <p><img src="images/Contact.png" width="130" height="26"></p>
+  <p>If you wish to contact me for any reason you can do so by using the email adres below</p>
+  <p>Spam@eddie%.nl  (% = 2+2)</p>
+  <p>&nbsp;</p>
+</div>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1458488-4']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</body>
+</html>
+
