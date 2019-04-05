@@ -23,9 +23,7 @@ services:
       - 51413:51413
       - 6881:6881/udp
     volumes:
-      - /home/pi/torrents-config/rtorrent:/config/rtorrent
-      - /home/pi/torrents-config/filebot-copy:/config/filebot-copy
-      - /home/pi/torrents-config/scripts:/config/scripts
+      - /home/pi/torrents-config:/config
       - /home/pi/media:/home/pi/media
       - /home/pi/downloads:/downloads
       - /var/run/docker.sock:/var/run/docker.sock:ro
