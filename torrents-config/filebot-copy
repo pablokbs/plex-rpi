@@ -2,8 +2,14 @@
 
 set -xv
 
+if hash docker; then
+  echo "Docker is installed"
+else
+  apk --update add docker
+fi
+
 MEDIA=/home/pi/media
-FILEBOT="docker run -v /home/pi/torrents-config/scripts:/scripts -v $MEDIA:$MEDIA -v /home/pi/downloads/incoming:/downloads/incoming pablokbs/filebot-rpi"
+FILEBOT="docker run --rm -v /home/pi/torrents-config/scripts:/scripts -v $MEDIA:$MEDIA -v /home/pi/downloads/incoming:/downloads/incoming pablokbs/filebot-rpi"
 MOVIES="$MEDIA/peliculas"
 SERIES="$MEDIA/series"
 MOVIES_FORMAT="movieFormat=$MOVIES/{n} ({y})/{n} ({y})"

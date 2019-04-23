@@ -28,4 +28,4 @@ peer_exchange = yes
 # scgi_port = 0.0.0.0:5000
 encoding_list = UTF-8
 # system.umask.set = 022
-system.method.set_key = event.download.finished,exec_filebot,"execute=/home/pi/torrents-config/filebot-copy,$d.get_base_path=,$d.get_custom1="
+#system.method.set_key = event.download.finished,exec_filebot,"execute=/usr/local/bin/filebot-copy,$d.get_base_path="

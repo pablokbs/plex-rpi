@@ -17,7 +17,7 @@ services:
       - /home/pi/downloads:/downloads
 
   rtorrent:
-    image: pablokbs/rutorrent-armhf
+    image: linuxserver/rutorrent:48a6db4b-ls30
     ports:
       - 80:80
       - 51413:51413
