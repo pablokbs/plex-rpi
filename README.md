@@ -1,7 +1,5 @@
 # Plex sobre Docker en Raspberry
 
---
-
 Con este repo podes crear tu propio server que descarga tus series y peliculas automáticamente, y cuando finaliza, las copia al directorio `media/` donde Plex las encuentra y las agrega a tu biblioteca.
 
 También agregué un pequeño server samba por si querés compartir los archivos por red
