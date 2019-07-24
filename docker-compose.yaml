@@ -38,7 +38,7 @@ services:
       - 32400:32400
       - 33400:33400
     volumes:
-      - /home/pi/plex:/root/Library
+      - /home/pi/plex:/root/Library/Application Support/Plex Media Server
       - /home/pi/media:/media
     restart: always
     network_mode: "host"
