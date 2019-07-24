@@ -17,7 +17,10 @@ services:
       - /home/pi/downloads:/downloads
 
   rtorrent:
-    image: linuxserver/rutorrent:48a6db4b-ls30
+    image: linuxserver/rutorrent:arm32v7-latest
+    environment:
+      - PUID=1000
+      - PGID=1000
     ports:
       - 80:80
       - 51413:51413
@@ -30,12 +33,12 @@ services:
     restart: always
 
   plex:
-    image: jaymoulin/plex:1.14.1
+    image: jaymoulin/plex:1.16.3-armhf
     ports:
       - 32400:32400
       - 33400:33400
     volumes:
-      - /home/pi/plex:/root/Library/Application Support/Plex Media Server
+      - /home/pi/plex:/root/Library
       - /home/pi/media:/media
     restart: always
     network_mode: "host"
