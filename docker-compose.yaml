@@ -13,8 +13,8 @@ services:
       - 445:445
     volumes:
       - /usr/share/zoneinfo/America/Argentina/Mendoza:/etc/localtime
-      - /home/pi/media:/media
-      - /home/pi/downloads:/downloads
+      - ${MEDIA}:/media
+      - ${DOWNLOADS}:/downloads
 
   rtorrent:
     image: linuxserver/rutorrent:arm32v7-v3.9-ls47
@@ -26,9 +26,9 @@ services:
       - 51413:51413
       - 6881:6881/udp
     volumes:
-      - /home/pi/torrents-config:/config
-      - /home/pi/media:/home/pi/media
-      - /home/pi/downloads:/downloads
+      - ${TORRENTS_CONFIG}:/config
+      - ${MEDIA}:${MEDIA}
+      - ${DOWNLOADS}:/downloads
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: always
 
@@ -38,7 +38,7 @@ services:
       - 32400:32400
       - 33400:33400
     volumes:
-      - /home/pi/plex:/root/Library/Application Support/Plex Media Server
-      - /home/pi/media:/media
+      - ${PLEX_CONFIG}:/root/Library/Application Support/Plex Media Server
+      - ${MEDIA}:/media
     restart: always
     network_mode: "host"
