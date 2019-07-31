@@ -29,6 +29,7 @@ services:
       - ${TORRENTS_CONFIG}:/config
       - ${MEDIA}:${MEDIA}
       - ${DOWNLOADS}:/downloads
+      - ${TORRENTS_CONFIG}/rtorrent/rtorrent_sess:/session
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: always
 
