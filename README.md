@@ -71,7 +71,7 @@ docker-compose up -d
 
 ## Cómo correrlo
 
-Simplemente bajate este repo y modificá las rutas de tus archivos en el docker-compose.yaml:
+Simplemente bajate este repo y modificá las rutas de tus archivos en el archivo (oculto) .env:
 
 
 ```
@@ -89,33 +89,37 @@ services:
       - 139:130
       - 445:445
     volumes:
-      - /usr/share/zoneinfo/America/Argentina/Mendoza:/etc/localtime   <--- modifica esto con tu zona horaria 
-      - /home/pi/media:/media              <--- ruta donde van a ir los archivos renombrados por filebot
-      - /home/pi/downloads:/downloads      <--- ruta donde se descargan los archivos del torrent antes de renombrarse
+      - /usr/share/zoneinfo/America/Argentina/Mendoza:/etc/localtime   <--- modifica esto con tu zona horaria si queres
+      - ${MEDIA}:/media
+      - ${DOWNLOADS}:/downloads
 
   rtorrent:
-    image: pablokbs/rutorrent-armhf
+    image: linuxserver/rutorrent:arm32v7-v3.9-ls47
+    environment:
+      - PUID=1000
+      - PGID=1000
     ports:
       - 80:80
       - 51413:51413
       - 6881:6881/udp
     volumes:
-      - /home/pi/torrents-config:/config  <--- asegurarse que esta sea la ruta de tu directorio descargado
-      - /home/pi/media:/home/pi/media     <--- ruta donde van a ir los archivos renombrados por filebot
-      - /home/pi/downloads:/downloads     <--- ruta donde se descargan los archivos del torrent antes de renombrarse
+      - ${TORRENTS_CONFIG}:/config
+      - ${MEDIA}:${MEDIA}
+      - ${DOWNLOADS}:/downloads
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: always
 
   plex:
-    image: jaymoulin/plex:1.14.1
+    image: jaymoulin/plex:1.16.3-armhf
     ports:
       - 32400:32400
       - 33400:33400
     volumes:
-      - /home/pi/plex:/root/Library/Application Support/Plex Media Server  <--- este directorio es donde se guardan las configuraciones de plex y los archivos temporales
-      - /home/pi/media:/media  <--- ruta donde van a ir los archivos renombrados por filebot
+      - ${PLEX_CONFIG}:/root/Library/Application Support/Plex Media Server
+      - ${MEDIA}:/media
     restart: always
     network_mode: "host"
+
 ```
 
 ## IMPORTANTE
