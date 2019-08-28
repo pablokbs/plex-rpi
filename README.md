@@ -6,6 +6,8 @@ También agregué un pequeño server samba por si querés compartir los archivos
 
 Todo esto es parte de unos tutoriales que estoy subiendo a [Youtube](https://www.youtube.com/playlist?list=PLqRCtm0kbeHCEoCM8TR3VLQdoyR2W1_wv)
 
+NOTA: Esta repo fue actualizada para correr usando flexget y transmission [en este video](https://youtu.be/TqVoHWjz_tI), podés todavia acceder a la versión vieja (con rtorrent) en la branch [rtorrent](https://github.com/pablokbs/plex-rpi/tree/rtorrent)
+
 ## Requerimientos iniciales
 
 Agregar tu usuario (cambiar `kbs` con tu nombre de usuario)
@@ -71,56 +73,9 @@ docker-compose up -d
 
 ## Cómo correrlo
 
-Simplemente bajate este repo y modificá las rutas de tus archivos en el archivo (oculto) .env:
+Simplemente bajate este repo y modificá las rutas de tus archivos en el archivo (oculto) .env, y después corré:
 
-
-```
-version: "2"
-
-services:
-
-  samba:
-    image: dperson/samba:rpi
-    restart: always
-    command: '-u "pi;password" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no"'  <--- estos son los directorios que vamos a compartir con samba y sus credenciales
-    stdin_open: true
-    tty: true
-    ports:
-      - 139:130
-      - 445:445
-    volumes:
-      - /usr/share/zoneinfo/America/Argentina/Mendoza:/etc/localtime   <--- modifica esto con tu zona horaria si queres
-      - ${MEDIA}:/media
-      - ${DOWNLOADS}:/downloads
-
-  rtorrent:
-    image: linuxserver/rutorrent:arm32v7-v3.9-ls47
-    environment:
-      - PUID=1000
-      - PGID=1000
-    ports:
-      - 80:80
-      - 51413:51413
-      - 6881:6881/udp
-    volumes:
-      - ${TORRENTS_CONFIG}:/config
-      - ${MEDIA}:${MEDIA}
-      - ${DOWNLOADS}:/downloads
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: always
-
-  plex:
-    image: jaymoulin/plex:1.16.3-armhf
-    ports:
-      - 32400:32400
-      - 33400:33400
-    volumes:
-      - ${PLEX_CONFIG}:/root/Library/Application Support/Plex Media Server
-      - ${MEDIA}:/media
-    restart: always
-    network_mode: "host"
-
-```
+`docker-compose up -d`
 
 ## IMPORTANTE
 

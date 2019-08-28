@@ -1,1 +1,0 @@
-ant clean repository deploy

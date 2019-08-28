@@ -6,11 +6,5 @@ plex/*
 .vim*
 downloads/*
 .gitconfig
-torrents-config/config/rtorrent/rtorrent_sess/*
-torrents-config/config/log/*
-torrents-config/config/nginx/*
-torrents-config/config/php/*
-torrents-config/config/rutorrent/*
-torrents-config/rutorrent/profiles/users/*
-torrents-config/rtorrent/rtorrent_sess/*
 *.log
+.DS_Store

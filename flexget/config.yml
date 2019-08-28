@@ -1,0 +1,97 @@
+web_server: yes
+
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 30
+
+templates:
+  tv:
+    regexp:
+      reject:
+        - x265: {from: title}
+    series:
+      settings:
+        tv:
+          exact: yes
+          propers: 12 hours
+          quality: 720p
+      tv:
+      - Black Mirror
+      - Brooklyn Nine-Nine
+      - Homeland
+      - Luther
+      - Mr Robot
+      - Rick and Morty
+      - SEAL Team
+      - Sherlock
+      - Silicon Valley
+      - Suits
+      - The Flash
+      - The Good Fight
+      - The Walking Dead
+      - Tosh.0
+      - True Detective
+      - Westworld
+
+    transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: 123456
+
+tasks:
+  eztvrss:
+    rss: https://eztv.ag/ezrss.xml
+    template: tv
+    priority: 2
+  sort_tv:
+    priority: 2
+    no_entries_ok: yes
+    parsing:
+      series: guessit
+    filesystem:
+      path: /downloads/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    thetvdb_lookup: yes
+    require_field: series_name
+    all_series:
+      parse_only: yes
+    exec:
+      auto_escape: yes
+      on_output:
+        for_entries: 'if mediainfo "{{ location }}" | grep EAC3; then ffpmeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k /storage/series/"{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"; else cp "{{ location }} /storage/series/"{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"; fi'
+
+  sort_movies:
+    priority: 2
+    no_entries_ok: yes
+    filesystem:
+      path: /downloads/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    require_field: movie_name
+    imdb_lookup: yes
+    exec:
+      auto_escape: yes
+      on_output:
+       for_entries: 'if mediainfo "{{ location }}" | grep EAC3; then ffpmeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k /storage/pelis/"{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"; else cp "{{ location }} /storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"; fi'
+  remove_stale_torrents:
+    from_transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: 123456
+    disable: [seen, seen_info_hash]
+    if:
+      - transmission_progress == 100: accept
+      - not transmission_seed_ratio_ok: reject
+      - not transmission_idle_limit_ok: reject
+    transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: 123456
+      action: purge
