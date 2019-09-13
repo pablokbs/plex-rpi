@@ -38,7 +38,7 @@ templates:
       host: transmission
       port: 9091
       username: admin
-      password: 123456
+      password: "123456"
 
 tasks:
   eztvrss:
@@ -92,7 +92,7 @@ tasks:
       host: transmission
       port: 9091
       username: admin
-      password: 123456
+      password: "123456"
     disable: [seen, seen_info_hash]
     if:
       - transmission_progress == 100: accept
@@ -102,5 +102,5 @@ tasks:
       host: transmission
       port: 9091
       username: admin
-      password: 123456
+      password: "123456"
       action: purge
