@@ -1,0 +1,227 @@
+web_server: yes #Si esto no esta nose puede acceder a la gui
+
+# Plantillas para que la configuración de series y pelis sea siempre la misma.
+
+templates:  
+  
+  series:
+    configure_series:
+      from:
+        trakt_list:
+          username: usuario-trakt
+          account: usuario-api
+          strip_dates: yes
+          list: lista-series
+          type: shows
+      settings:
+          exact: yes
+          propers: 12 hours
+          quality: 720p+ hdtv+
+    priority: 2
+    seen: local
+    no_entries_ok: yes
+    accept_all: yes
+    trakt_lookup: yes  # can also use imdb_lookup or tmdb_lookup
+
+
+  pelis:
+        trakt_list:
+          username: usuario-trakt
+          account: usuario-api
+          strip_dates: yes
+          list: lista-pelis
+          type: movies
+        seen: local
+        no_entries_ok: yes
+        accept_all: yes
+        trakt_lookup: yes  # can also use imdb_lookup or tmdb_lookup
+        priority: 10 # run after the movie queue fill task
+
+tasks:
+  # En las tareas sync-* se generan las listas para que flexget trabaje 
+  # y marca cual fue el último capitulo marcado como visto. Obteniendo el contenido desde trakt
+  sync-series:
+    seen: local
+    no_entries_ok: yes
+    trakt_lookup: yes
+    trakt_list:
+          username: usuario-trakt
+          account: usuario-api
+          strip_dates: yes
+          list: lista-series
+          type: shows
+    accept_all: yes
+    set_series_begin: yes
+    list_remove:
+      - trakt_list:
+          username: usuario-trakt
+          account: usuario-api
+          list: lista-series
+          type: shows
+    list_add:
+      - trakt_list:
+          username: usuario-trakt
+          account: usuario-api
+          list: lista-series
+          type: shows
+    next_trakt_episodes:
+        username: usuario-trakt
+        account: usuario-api
+        context: watched # esto depende de como cada uno usa trakt, puede ser collected también
+        list: lista-series
+
+# Esta tarea sincroniza la lista de pelis
+  sync-movies:
+    trakt_list:
+      username: usuario-trakt
+      account: usuario-api
+      list: lista-pelis
+    accept_all: yes
+    list_add:
+      - movie_list: lista-pelis
+      
+# En las tareas discover-* buscamos el contenido de las listas previamente generadas.
+# Usando los templates previamente creados, pasamos la configuración de lo que queremos ver.
+
+discover-series:
+    template: tv
+    discover:
+      what:
+        - next_trakt_episodes:
+            username: usuario-trakt
+            account: usuario-api
+            context: watched
+            list: lista-series
+      from:
+        - argenteam:
+            force_subtitles: yes
+        - piratebay:
+            category: video
+            sort_by: leechers
+            url: https://piratebaymirror.eu
+        - search_rss:
+            url: https://eztv.ag/ezrss.xml
+            all_entries: no
+            ascii: yes
+            escape: yes
+            link:
+              - link
+              - magneturi
+    list_match:
+              from:
+                - trakt_list:
+                   username: usuario-trakt
+                   account: usuario-api
+                   list: lista-series
+                   type: shows
+    torrent_alive: 10 # Will reject results with less than 10 seeds
+    transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: "123456"
+
+ discover-movies:
+    template: movies
+    quality: 720p+ hdtv+ # Make sure no screeners or cams are downloaded
+    discover:
+      what:
+        - movie_list:
+            list_name: lista-pelis
+            strip_year: yes
+      from:
+        - argenteam:
+            force_subtitles: yes
+        - piratebay:
+            category: video
+            sort_by: leechers
+            url: https://piratebaymirror.eu
+        - search_rss:
+            url: https://eztv.ag/ezrss.xml
+            all_entries: no
+            ascii: yes
+            escape: yes
+            link:
+              - link
+              - magneturi
+      interval: 1 days
+    list_match:
+      from:
+        - movie_list: lista-pelis
+    torrent_alive: 10 # Will reject results with less than 10 seeds
+    transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: "123456"
+
+# Ordenamos las descargas
+
+ sort_tv:
+    priority: 2
+    no_entries_ok: yes
+    parsing:
+      series: guessit
+    filesystem:
+      path: /downloads/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    thetvdb_lookup: yes
+    require_field: series_name
+    all_series:
+      parse_only: yes
+    exec:
+      auto_escape: yes
+      on_output:
+        for_entries: |
+          if mediainfo "{{ location }}" | grep EAC3; then
+            mkdir -p "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          else
+            mkdir -p "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}" && cp "{{ location }}" "/storage/series/{{ tvdb_series_name }}/Season {{ series_season }}/{{ tvdb_series_name }} - {{ series_id }}{{ location | pathext }}"
+          fi
+
+ sort_movies:
+    priority: 2
+    no_entries_ok: yes
+    filesystem:
+      path: /downloads/complete
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+    accept_all: yes
+    require_field: movie_name
+    imdb_lookup: yes
+    exec:
+      auto_escape: yes
+      on_output:
+       for_entries: |
+         if mediainfo "{{ location }}" | grep EAC3; then
+           mkdir -p "/storage/pelis/{{ movie_name }} ({{ movie_year }})" && ffmpeg -hwaccel auto -y -i "{{ location }}" -map 0 -c:s copy -c:v copy -c:a ac3 -b:a 640k "/storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+         else
+           mkdir -p "/storage/pelis/{{ movie_name }} ({{ movie_year }})" && cp "{{ location }}" "/storage/pelis/{{ movie_name }} ({{ movie_year }})/{{ movie_name }} ({{ movie_year }}){{ location | pathext }}"
+         fi
+# Limpiamos transmission
+
+  remove-stale-torrents:
+    from_transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: "123456"
+    disable: [seen, seen_info_hash]
+    if:
+      - transmission_progress == 100: accept
+            - not transmission_seed_ratio_ok: reject
+      - not transmission_idle_limit_ok: reject
+    transmission:
+      host: transmission
+      port: 9091
+      username: admin
+      password: "123456"
+      action: purge
+
+# Cada cuanto se ejecutan las tareas. Las mismas tienen restricciones para no generar sobrecarga.
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 30
