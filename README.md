@@ -51,7 +51,7 @@ sudo apt-key fingerprint 0EBFCD88
 echo "deb [arch=armhf] https://download.docker.com/linux/debian \
      $(lsb_release -cs) stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list
-sudo apt-get update && sudo apt-get install -y docker-ce docker-compose
+sudo apt-get update && sudo apt-get install -y --no-install-recommends docker-ce docker-compose
 ```
 
 Modificá tu docker config para que guarde los temps en el disco:
