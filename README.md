@@ -83,7 +83,7 @@ fdisk -l
 ls -l /dev/disk/by-uuid/
 # y simplemente montamos el disco en el archivo /etc/fstab (pueden hacerlo por el editor que les guste o por consola)
 echo UUID="{nombre del disco o UUID que es único por cada disco}" {directorio donde queremos montarlo} (por ejemplo /mnt/storage) ntfs-3g defaults,auto 0 0 | \
-     sudo tee /etc/fstab
+     sudo tee -a /etc/fstab
 # por último para que lea el archivo fstab
 mount -a (o reiniciar)
 ```
