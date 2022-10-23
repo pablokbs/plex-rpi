@@ -77,7 +77,7 @@ tasks:
       recursive: yes
     accept_all: yes
     require_field: movie_name
-    imdb_lookup: yes
+    tmdb_lookup: yes
     exec:
       auto_escape: yes
       on_output:
