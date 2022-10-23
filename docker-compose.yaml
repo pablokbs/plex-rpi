@@ -17,7 +17,7 @@ services:
       - ${STORAGE}/torrents:/downloads
 
   plex:
-    image: jaymoulin/plex:1.16.5
+    image: jaymoulin/plex:1.25.2.5319-armhf
     expose:
       - 32400
       - 33400
@@ -46,7 +46,7 @@ services:
     restart: unless-stopped
 
   flexget:
-    build: flexget-arm
+    image: wiserain/flexget:3.3.39
     volumes:
       - ./flexget:/config
       - ${STORAGE}/torrents:/downloads
