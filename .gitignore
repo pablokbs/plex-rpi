@@ -8,3 +8,7 @@ downloads/*
 .gitconfig
 *.log
 .DS_Store
+.env
+flexget/*.sqlite
+transmission/dht.dat
+transmission/stats.json

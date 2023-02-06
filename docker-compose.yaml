@@ -1,38 +1,42 @@
-version: "2"
+version: "3.7"
 
 services:
 
   samba:
-    image: dperson/samba:rpi
+    image: dperson/samba # no hay tag con versiones, solo latest
     restart: always
     command: '-u "pi;password" -s "media;/media;yes;no" -s "downloads;/downloads;yes;no"'
     stdin_open: true
     tty: true
+    environment:
+      - TZ=America/Argentina/Mendoza
     ports:
       - 139:139
       - 445:445
     volumes:
-      - /usr/share/zoneinfo/America/Argentina/Mendoza:/etc/localtime
       - ${MEDIA}:/media
       - ${STORAGE}/torrents:/downloads
 
   plex:
-    image: jaymoulin/plex:1.25.2.5319-armhf
+    image: jaymoulin/plex:1.30.1.6562
     expose:
       - 32400
       - 33400
-    hostname: raspberrypi
+    # Descomentar si NO usas network_mode: "host"
+    # ports:
+    #  - 32400:32400
+    #  - 33400:33400
+    environment:
+      - TZ=America/Argentina/Mendoza
     volumes:
       - ${STORAGE}/Plex Media Server:/root/Library/Application Support/Plex Media Server
       - ${MEDIA}:/media
       - ${STORAGE}/tmp:/tmp
     restart: unless-stopped
-    networks: 
-      lan:
-        ipv4_address: 192.168.0.3
+    network_mode: "host" # Solo funciona en Linux
 
   transmission:
-    image : jaymoulin/transmission
+    image : jaymoulin/transmission:3.00-1.6.1
     command: transmission-daemon -f -g /config
     volumes:
       - ./transmission:/config
@@ -46,26 +50,17 @@ services:
     restart: unless-stopped
 
   flexget:
-    image: wiserain/flexget:3.3.39
+    image: wiserain/flexget:3.5
     volumes:
       - ./flexget:/config
+      - ./flexget/custom-cont-init.d:/custom-cont-init.d
       - ${STORAGE}/torrents:/downloads
       - ${MEDIA}:/storage
     ports:
       - 5050:5050
     environment:
+      - PUID=1001
+      - PGID=1001
       - TORRENT_PLUGIN=transmission
-      - FG_WEBUI_PASSWD=123456
+      - FG_WEBUI_PASSWD=p3l4d0_N3RD # la puedes cambiar por la que quieras
     restart: unless-stopped
-    links:
-      - transmission
-
-networks:
-  lan:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
-    ipam:
-      config:
-        - subnet: "192.168.0.0/24"       
-          gateway: "192.168.0.1"
