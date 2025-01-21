@@ -36,7 +36,7 @@ services:
     network_mode: "host" # Solo funciona en Linux
 
   transmission:
-    image : jaymoulin/transmission:3.00-1.6.1
+    image : jaymoulin/transmission:4.0.6
     command: transmission-daemon -f -g /config
     volumes:
       - ./transmission:/config
