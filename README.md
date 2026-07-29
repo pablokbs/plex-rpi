@@ -1,3 +1,7 @@
+> ⚠️ **Este repo fue reemplazado por [Pelado-Nerdworks/media-stack](https://github.com/Pelado-Nerdworks/media-stack/).**
+>
+> Ya no se mantiene. Para setups nuevos usá `media-stack` directamente (Caddy + \*arr + Jellyfin, subpaths limpios, bootstrap script). Este código queda acá solo como referencia histórica.
+
 # Plex sobre Docker en Raspberry
 
 Con este repo podes crear tu propio server que descarga tus series y peliculas automáticamente, y cuando finaliza, las copia al directorio `media/` donde Plex las encuentra y las agrega a tu biblioteca.
